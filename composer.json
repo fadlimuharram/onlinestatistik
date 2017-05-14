@@ -1,0 +1,16 @@
+{
+    "name": "azurescarlet/onlinestatistik",
+    "description": "online statistik",
+    "require": {
+        "illuminate/database": "^5.4",
+        "illuminate/events": "^5.4"
+    },
+    "autoload":{
+      "psr-4":{
+        "App\\":"App"
+      },
+      "files":[
+        "App/Setting/Koneksi.php"
+      ]
+    }
+}
