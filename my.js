@@ -4,6 +4,8 @@ $(document).ready(function() {
   getPengunjungDalam24();
   getallpengunjung();
 
+
+//------------------------------------Sistem 24 jam ------------------------
   //---ambil 5 hari ke belakang
   var dataDaysJson = JSON.parse($.ajax({
     url: BaseUrl + 'request.php?user=getday',
@@ -69,6 +71,77 @@ $(document).ready(function() {
          }
      }
    });
+
+//------------------------------------End Sistem 24 jam ------------------------
+
+//------------------------------------Sistem Per Malam--------------------------
+
+var dataDaysJson2 = JSON.parse($.ajax({
+  url: BaseUrl + 'request.php?user=gerdaypermidnight',
+  type: 'GET',
+  dataType: "json",
+  async: false
+}).responseText);
+
+var dataDaysArray2 = [];
+
+$.each(dataDaysJson2,function(index, el) {
+  dataDaysArray2.push(el);
+});
+
+
+
+//---ambil data per hari selama 5 hari kebelakang
+var dataPerDayJson2 = JSON.parse($.ajax({
+  url: BaseUrl + 'request.php?user=getpermidnight',
+  type: 'GET',
+  dataType: "json",
+  async: false
+}).responseText);
+
+var dataPerDayArray2 = [];
+
+$.each(dataPerDayJson2,function(index, el) {
+  dataPerDayArray2.push(el);
+});
+
+var ctx2 = document.getElementById("myChart2");
+var myChart2 = new Chart(ctx2, {
+   type: 'bar',
+   data: {
+       labels: dataDaysArray2,
+       datasets: [{
+           label: 'Statistik Pengunjung Dalam 5 Hari',
+           data: dataPerDayArray2,
+           backgroundColor: [
+               'rgba(255, 99, 132, 0.2)',
+               'rgba(54, 162, 235, 0.2)',
+               'rgba(255, 206, 86, 0.2)',
+               'rgba(75, 192, 192, 0.2)',
+               'rgba(153, 102, 255, 0.2)'
+           ],
+           borderColor: [
+               'rgba(255,99,132,1)',
+               'rgba(54, 162, 235, 1)',
+               'rgba(255, 206, 86, 1)',
+               'rgba(75, 192, 192, 1)',
+               'rgba(153, 102, 255, 1)'
+           ],
+           borderWidth: 1
+       }]
+   },
+   options: {
+       scales: {
+           yAxes: [{
+               ticks: {
+                   beginAtZero:true
+               }
+           }]
+       }
+   }
+ });
+
+//------------------------------------End Sistem Per Malam--------------------------
 
 });//end document ready
 

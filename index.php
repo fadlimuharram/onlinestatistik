@@ -3,6 +3,17 @@ require_once"vendor/autoload.php";
 use \Carbon\Carbon;
 $usr = new \App\Controller\UserController();
 
+$midnight = Carbon::now('Asia/Jakarta')->subDay(1)->secondsSinceMidnight();
+$midnightKemarin = Carbon::now('Asia/Jakarta')->subDay(2)->secondsSinceMidnight();
+echo Carbon::createFromTimestamp(Carbon::now('Asia/Jakarta')->subDay(1)->timestamp - $midnight);
+echo '<br />';
+echo Carbon::createFromTimestamp(Carbon::now('Asia/Jakarta')->subDay(2)->timestamp - $midnight);
+
+/*
+$midnight = Carbon::now('Asia/Jakarta')->subDay(0)->secondsSinceMidnight();
+echo Carbon::createFromTimestamp(Carbon::now('Asia/Jakarta')->subDay(0)->timestamp - $midnight)->toDateTimeString();
+echo Carbon::now('Asia/Jakarta')->subDay(0);
+*/
 session_start();
 if (empty($_SESSION['ipadd']) || empty($_SESSION['timeIP'])) {
 
@@ -46,7 +57,12 @@ if (!empty($_SESSION['timeIP']) && strtotime($_SESSION['timeIP']) + 1800 < Carbo
          <div class="col-md-8">
 
            <h3 class="text-center">Online Statistik Dengan PHP</h3><br />
+           <h4 class="text-center">Menggunakan Sistem 24 Jam Dari Sekarang</h4><br />
            <canvas id="myChart"></canvas><br />
+
+           <h4 class="text-center">Menggunakan Sistem Per Malam</h4><br />
+           <canvas id="myChart2"></canvas><br />
+
            <h4 class="text-center">Pengunjung Dalam 24 Jam Terakhir</h4><br />
            <?php include_once"HariIni.php"; ?>
            <h4 class="text-center">Total Pengunjung</h4><br />

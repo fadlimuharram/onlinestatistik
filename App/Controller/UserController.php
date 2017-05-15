@@ -32,16 +32,19 @@ class UserController{
 
 
 
-  //fungsi untuk membuat 5 hari kebelakang pada chart posisi (x)
-  function getDay($berapahari){
+  //fungsi untuk membuat 5 hari kebelakang pada chart posisi (x) dengan sistem 24 jam
+  function getDay_x($berapahari){
     $hari = [];
     for ($i=$berapahari-1; $i >= 0; $i--) {
-      $hari[$i] = Carbon::now('Asia/Jakarta')->subDay($i)->format('l jS \\of F Y');
+      $hari[$i] = Carbon::now('Asia/Jakarta')->subDay($i)->diffForHumans();
+      if ($hari[$i] == "1 second ago") {
+        $hari[$i] = "Within 24 hours";
+      }
     }
     return json_encode($hari);
   }
 
-  //fungsi untuk menghitung berapa jumlah user per hari, di loop selama 5 hari kebelakang
+  //fungsi untuk menghitung berapa jumlah user per hari, di loop selama 5 hari kebelakang dengan sistem 24 jam dari sekarang
   function getCountDay($berapahari){
     $hitung = [];
     for ($i=$berapahari-1; $i >= 0 ; $i--) {
@@ -52,6 +55,37 @@ class UserController{
 
     return json_encode($hitung);
 
+  }
+
+  //fungsi untuk menghitung berapa jumlah user per hari, di loop selama 5 hari kebelakang dengan sistem per malam
+  function getCountDayPerMidnight($berapahari){
+    $hitung = [];
+    //untuk mendapatkan hari sebelumnya
+    for ($i=$berapahari-2; $i >= 0 ; $i--) {
+        $midnightHariIni = Carbon::now('Asia/Jakarta')->subDay($i)->secondsSinceMidnight();
+        $midnightKemarin = Carbon::now('Asia/Jakarta')->subDay($i+1)->secondsSinceMidnight();
+        $hitung[$i+1] = User::where('created_at','<',Carbon::createFromTimestamp(Carbon::now('Asia/Jakarta')->subDay($i)->timestamp - $midnightHariIni)->toDateTimeString())
+                          ->where('created_at','>=',Carbon::createFromTimestamp(Carbon::now('Asia/Jakarta')->subDay($i+1)->timestamp - $midnightKemarin))
+                          ->count();
+    }
+    //untuk mendapatkan hari ini
+    $midnight = Carbon::now('Asia/Jakarta')->secondsSinceMidnight();
+    $hariini = User::where('created_at','>=',Carbon::createFromTimestamp(Carbon::now('Asia/Jakarta')->timestamp - $midnight)->toDateTimeString())
+                      ->where('created_at','<',Carbon::now('Asia/Jakarta'))
+                      ->count();
+
+    $hitung[0] = $hariini;
+    return json_encode($hitung);
+  }
+
+
+  //fungsi untuk membuat 5 hari kebelakang pada chart posisi (x) dengan sistem per malam
+  function getCountDayPerMidnight_x($berapahari){
+    $hari = [];
+    for ($i=$berapahari-1; $i >= 0; $i--) {
+      $hari[$i] = Carbon::now('Asia/Jakarta')->subDay($i)->format('l jS \\of F Y');
+    }
+    return json_encode($hari);
   }
 
 
